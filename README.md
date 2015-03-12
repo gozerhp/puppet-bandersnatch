@@ -1,5 +1,5 @@
-# OpenStack Logstash Module
+# OpenStack Bandersnatch Module
 
 ## Overview
 
-Installs and configures Logstash.
+Installs and configures Bandersnatch.
