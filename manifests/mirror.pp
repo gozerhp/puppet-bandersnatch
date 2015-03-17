@@ -21,7 +21,7 @@ class bandersnatch::mirror (
   $mirror_root = '/srv/static/mirror',
   $static_root = '/srv/static',
   $daily_snapshots = false,
-  $snapshot_retention = 5,
+  $snapshot_retention = 5
 ) {
 
   if ! defined(File[$static_root]) {
@@ -69,6 +69,18 @@ class bandersnatch::mirror (
 
   if $daily_snapshots {
     $cron_command = "run-bandersnatch && run-bandersnatch-snapshotting ${mirror_root}/web ${snapshot_retention}"
+    file { '/usr/local/bin/run-bandersnatch-snapshotting':
+      ensure => present,
+      source => 'puppet:///modules/bandersnatch/run_snapshotting.sh',
+      mode   => '0755',
+    }
+  }
+  else {
+    $cron_command = 'run-bandersnatch'
+  }
+
+  if $daily_snapshots {
+    $cron_command = "run-bandersnatch && run-bandersnatch-snapshotting /srv/static/mirror/web ${snapshot_retention}"
     file { '/usr/local/bin/run-bandersnatch-snapshotting':
       ensure => present,
       source => 'puppet:///modules/bandersnatch/run_snapshotting.sh',
