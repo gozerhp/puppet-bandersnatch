@@ -18,6 +18,8 @@
 #
 class bandersnatch::mirror (
   $vhost_name,
+  $daily_snapshots = false,
+  $snapshot_retention = 5,
 ) {
   include apache
 
@@ -42,9 +44,21 @@ class bandersnatch::mirror (
     source  => 'puppet:///modules/bandersnatch/bandersnatch.conf',
   }
 
+  if $daily_snapshots {
+    $cron_command = "run-bandersnatch && run-bandersnatch-snapshotting /srv/static/mirror/web ${snapshot_retention}"
+    file { '/usr/local/bin/run-bandersnatch-snapshotting':
+      ensure => present,
+      source => 'puppet:///modules/bandersnatch/run_snapshotting.sh',
+      mode   => '0755',
+    }
+  }
+  else {
+    $cron_command = 'run-bandersnatch'
+  }
+
   cron { 'bandersnatch':
     minute      => '*/5',
-    command     => 'flock -n /var/run/bandersnatch/mirror.lock timeout -k 2m 30m run-bandersnatch >>/var/log/bandersnatch/mirror.log 2>&1',
+    command     => "flock -n /var/run/bandersnatch/mirror.lock timeout -k 2m 30m ${cron_command} >>/var/log/bandersnatch/mirror.log 2>&1",
     environment => 'PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin',
   }
 }
