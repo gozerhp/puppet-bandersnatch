@@ -17,24 +17,6 @@
 # Class to install common bandersnatch items.
 #
 class bandersnatch {
-  if ! defined(File['/srv/static']) {
-    file { '/srv/static':
-      ensure => directory,
-    }
-  }
-
-  file { '/srv/static/mirror':
-    ensure  => directory,
-    owner   => 'root',
-    group   => 'root',
-  }
-
-  file { '/srv/static/mirror/web':
-    ensure  => directory,
-    owner   => 'root',
-    group   => 'root',
-    require => File['/srv/static/mirror'],
-  }
 
   package { 'bandersnatch':
     ensure   => 'present',

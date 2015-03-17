@@ -18,28 +18,51 @@
 #
 class bandersnatch::mirror (
   $vhost_name,
+  $mirror_root = '/srv/static/mirror',
+  $static_root = '/srv/static'
 ) {
+
+  if ! defined(File[$static_root]) {
+    file { $static_root:
+      ensure => directory,
+    }
+  }
+
+  file { $mirror_root:
+    ensure  => directory,
+    owner   => 'root',
+    group   => 'root',
+    require => File[$static_root],
+  }
+
+  file { "${mirror_root}/web":
+    ensure  => directory,
+    owner   => 'root',
+    group   => 'root',
+    require => File[$mirror_root],
+  }
+
   include apache
 
   apache::vhost { $vhost_name:
     port     => 80,
     priority => '50',
-    docroot  => '/srv/static/mirror/web',
-    require  => File['/srv/static/mirror/web'],
+    docroot  => "${mirror_root}/web",
+    require  => File["${mirror_root}/web"],
   }
 
-  file { '/srv/static/mirror/web/robots.txt':
+  file { "${mirror_root}/web/robots.txt":
     ensure  => present,
     owner   => 'root',
     group   => 'root',
     mode    => '0444',
     source  => 'puppet:///modules/bandersnatch/robots.txt',
-    require => File['/srv/static/mirror/web'],
+    require => File["${mirror_root}/web"],
   }
 
   file { '/etc/bandersnatch.conf':
-    ensure  => present,
-    source  => 'puppet:///modules/bandersnatch/bandersnatch.conf',
+    ensure   => present,
+    content  => template('bandersnatch/bandersnatch.conf.erb'),
   }
 
   cron { 'bandersnatch':
