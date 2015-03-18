@@ -79,18 +79,6 @@ class bandersnatch::mirror (
     $cron_command = 'run-bandersnatch'
   }
 
-  if $daily_snapshots {
-    $cron_command = "run-bandersnatch && run-bandersnatch-snapshotting /srv/static/mirror/web ${snapshot_retention}"
-    file { '/usr/local/bin/run-bandersnatch-snapshotting':
-      ensure => present,
-      source => 'puppet:///modules/bandersnatch/run_snapshotting.sh',
-      mode   => '0755',
-    }
-  }
-  else {
-    $cron_command = 'run-bandersnatch'
-  }
-
   cron { 'bandersnatch':
     minute      => '*/5',
     command     => "flock -n /var/run/bandersnatch/mirror.lock timeout -k 2m 30m ${cron_command} >>/var/log/bandersnatch/mirror.log 2>&1",
