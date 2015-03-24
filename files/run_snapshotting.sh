@@ -20,6 +20,6 @@ echo "Creating simple index snapshot ${SNAPSHOT_NAME}"
 cp -r simple ${SNAPSHOT_NAME}
 
 # remove everything but the last $DAYS_RETENTION snapshots
-rm -rf `ls -1d snapshot*| head -n -	${DAYS_RETENTION}`
+rm -rf `ls -1d snapshot*| head -n -${DAYS_RETENTION}`
 
 # snapshots are now available at http://your-mirror.network/snapshot-DATE/
