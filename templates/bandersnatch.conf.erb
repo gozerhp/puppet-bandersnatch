@@ -7,10 +7,10 @@ directory = <%= @mirror_root -%>
 ; scheme for PyPI server MUST be https
 master = https://pypi.python.org
 
-; The network socket timeout to use for all connections. This is set to a
-; somewhat aggressively low value: rather fail quickly temporarily and re-run
-; the client soon instead of having a process hang infinitely and have TCP not
-; catching up for ages.
+; The network socket timeout (in seconds) to use for all connections. This is
+; set to a somewhat aggressively low value: rather fail quickly temporarily
+; and re-run the client soon instead of having a process hang infinitely and
+; have TCP not catching up for ages.
 timeout = 10
 
 ; Number of worker threads to use for parallel downloads.
@@ -25,7 +25,7 @@ workers = 3
 ; "false".
 stop-on-error = false
 <% if @daily_snapshots %>
-; Package deletion turned off because we're taking snapshots and need to 
+; Package deletion turned off because we're taking snapshots and need to
 ; keep all packages so old snapshots keep working
 delete-packages = false
 <% else %>
