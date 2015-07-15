@@ -68,7 +68,7 @@ class bandersnatch::mirror (
   }
 
   if $daily_snapshots {
-    $cron_command = "run-bandersnatch && run-bandersnatch-snapshotting ${mirror_root}/web ${snapshot_retention}"
+    $cron_command = "/bin/sh -l -c \"run-bandersnatch && run-bandersnatch-snapshotting ${mirror_root}/web ${snapshot_retention}\""
     file { '/usr/local/bin/run-bandersnatch-snapshotting':
       ensure => present,
       source => 'puppet:///modules/bandersnatch/run_snapshotting.sh',
